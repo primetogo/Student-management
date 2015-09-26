@@ -4,10 +4,11 @@
 #include <conio.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 
 /* Student management version alpha */
 
-void FileExists(void), AddStudent(void);
+void FileExists(void), AddStudent(void), DeleteStudent(void), UpdateStudent(void), Menu(void), DisplayData(void);
 
 void main(void){
 	Menu();
@@ -26,7 +27,8 @@ void Menu(void){
 	printf("   2 - Delete student  \n");
 	printf("   3 - Update student data \n");
 	printf("   4 - Calculating grade \n");
-	printf("   5 - Exit! \n");
+	printf("   5 - Display student data \n");
+	printf("   6 - Exit! \n");
 	printf("   Go to -> ");
 	scanf("%c", &modeSelect);
 	
@@ -39,9 +41,12 @@ void Menu(void){
 		FileExists();
 		DeleteStudent();
 	}else if(modeSelect == '3'){
-		
+		system("cls");
+		FileExists();
+		UpdateStudent();
 	}else if(modeSelect == '4'){
-	}else if(modeSelect == '5'){
+	}else if(modeSelect == '5'){		
+	}else if(modeSelect == '6'){
 		exit(0);
 	}
 	Menu();
@@ -96,7 +101,8 @@ void FileExists(void){
 				printf(" ]");
 			}
 			system("cls");
-		}	
+		}
+		fclose(file);	
 	}
 	else{
 	    time_t current_time;
@@ -123,12 +129,19 @@ void FileExists(void){
 
 void AddStudent(void){
 	char stuName[200], stuSurname[200], id[200], year[200], score[200]; 
+	int ch;
 	printf("################################################# \n");
 	printf("#                                               # \n");
-	printf("#       Student Management Enroll System        # \n");
+	printf("#         Adding student to Database            # \n");
 	printf("#                                               # \n");
 	printf("################################################# \n \n");
-	printf("   Please, insert student information below.      \n");
+	printf("   Press N to continue or 0 to exit.      \n");
+    ch = getch();
+    if(ch == 48){
+    	system("cls");
+    	Menu();
+	}
+	printf("   Please, insert student information below.      \n");	
 	printf("Student name? --> ");
 	scanf("%s", &stuName);
 	printf("Surname? --> ");
@@ -172,11 +185,19 @@ void AddStudent(void){
 
 void DeleteStudent(void){
 	char studentID[20];
+	bool recordExists = false;
+	int ch;
 	printf("################################################# \n");
 	printf("#                                               # \n");
-	printf("#       Student Management Enroll System        # \n");
+	printf("#         Delete student from Database          # \n");
 	printf("#                                               # \n");
 	printf("################################################# \n \n");
+	printf("   Press N to continue or 0 to exit.      \n");
+    ch = getch();
+    if(ch == 48){
+    	system("cls");
+    	Menu();
+	}
 	printf("   Please, insert student id that you want to delete.      \n");
 	printf("Student id --> ");
 	scanf("%s", &studentID);
@@ -191,16 +212,107 @@ void DeleteStudent(void){
 		if(test == NULL){
 			fprintf(file2,"%s", textTemp);
 		}
+		else{
+			recordExists = true;
+		}
 	}
 	fclose(file1);
 	fclose(file2);
-	remove("studb.txt");
-	rename("temp.txt", "studb.txt");
-    printf("Delete student successfuly!... \n");
-	printf("Press any key to continue!");
-	getch();
+	if(recordExists == true){
+		remove("studb.txt");
+		rename("temp.txt", "studb.txt");
+	    printf("Delete student successfuly!... \n");
+		printf("Press any key to continue!");
+		getch();
+	}else{
+		printf("Student ID not found! \n");
+		printf("Press any key to re-enter ID!");
+		getch();
+		system("cls");
+		DeleteStudent();
+	}
 }
 
 void UpdateStudent(void){
+	char studentID[20], stuName[200], stuSurname[200], year[200], score[10];
+	int ch;
+	printf("################################################# \n");
+	printf("#                                               # \n");
+	printf("#           Edit student in Database            # \n");
+	printf("#                                               # \n");
+	printf("################################################# \n \n");
+	printf("   Press N to continue or 0 to exit.      \n");
+    ch = getch();
+    if(ch == 48){
+    	system("cls");
+    	Menu();
+	}
+	printf("   Please, insert student id that you want to edit.      \n");
+	printf("Student id --> ");
+	scanf("%s", &studentID);
+	printf("   Please, insert information below.      \n");
+	printf("Student name? --> ");
+	scanf("%s", &stuName);
+	printf("Surname? --> ");
+	scanf("%s", &stuSurname);
+	printf("student year? --> ");
+	scanf("%s", &year);
+	score[0] = "0";
 	
+	FILE *file1, *file2;
+	file1 = fopen("studb.txt", "r");
+	char *test;
+	file2 = fopen("temp.txt", "w+");
+	char textTemp[2048];
+	int stuNameLength = strlen(stuName), stuSurnameLength = strlen(stuSurname), idLength = strlen(studentID);
+	int yearLength = strlen(year);
+	int firstGap = 27 - stuNameLength, secondGap = 30 - stuSurnameLength, thirdGap = 21 - idLength, 
+	forthGap = 17 - yearLength, counter;
+	bool recordExists = false;
+	while(fgets(textTemp, sizeof(textTemp), file1) != NULL){
+		test = strstr(textTemp, studentID);   
+		if(test == NULL){
+			fprintf(file2,"%s", textTemp);
+		}
+		else{
+			fprintf(file2, " ");
+			fprintf(file2, stuName);
+			for(counter = 0; counter <= firstGap; counter++){
+				fprintf(file2, " ");
+			}
+			fprintf(file2, stuSurname);
+			for(counter = 0; counter <= secondGap; counter++){
+				fprintf(file2, " ");
+			}
+			fprintf(file2, studentID);
+			for(counter = 0; counter <= thirdGap; counter++){
+				fprintf(file2, " ");
+			}
+			fprintf(file2, year);
+			for(counter = 0; counter <= forthGap; counter++){
+				fprintf(file2, " ");
+			}
+			fprintf(file2, score);
+			fprintf(file2, "\n");
+			recordExists = true;
+		}
+		
+	}
+	fclose(file1);
+	fclose(file2);
+	if(recordExists == true){
+		remove("studb.txt");
+		rename("temp.txt", "studb.txt");
+	    printf("Update student successfuly!... \n");
+	    printf("Press any key to continue!");
+		getch();
+	}else{
+		printf("Student ID not found! \n");
+	    printf("Press any key to re-enter ID!");
+		getch();
+		system("cls");
+		UpdateStudent();
+	}
 }
+
+
