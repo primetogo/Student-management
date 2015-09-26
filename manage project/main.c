@@ -9,7 +9,7 @@
 /* Student management version alpha */
 
 void FileExists(void), AddStudent(void), DeleteStudent(void), UpdateStudent(void), Menu(void), DisplayData(void);
-
+void CalculateGrade(void);
 void main(void){
 	Menu();
 }
@@ -126,9 +126,6 @@ void FileExists(void){
 	}
 }
 	
-		
-	
-
 
 void AddStudent(void){
 	char stuName[200], stuSurname[200], id[200], year[200]; 
@@ -340,5 +337,9 @@ void DisplayData(void){
 	fclose(file);
 	printf("Press any key to continue!");
 	getch();
+}
+
+void CalculateGrade(void){
+	
 }
 
