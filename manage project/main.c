@@ -9,7 +9,7 @@
 /* Student management version alpha */
 
 void FileExists(void), AddStudent(void), DeleteStudent(void), UpdateStudent(void), Menu(void), DisplayData(void);
-void CalculateGrade(void);
+void CalculateGrade(void), Grading(int score, char *name, char *surname), UpdateScore(void);
 void main(void){
 	Menu();
 }
@@ -28,7 +28,8 @@ void Menu(void){
 	printf("   3 - Update student data \n");
 	printf("   4 - Calculating grade \n");
 	printf("   5 - Display student data \n");
-	printf("   6 - Exit! \n");
+	printf("   6 - Edit student score \n");
+	printf("   7 - Exit! \n");
 	printf("   Go to -> ");
 	scanf("%c", &modeSelect);
 	
@@ -45,11 +46,18 @@ void Menu(void){
 		FileExists();
 		UpdateStudent();
 	}else if(modeSelect == '4'){
+		system("cls");
+		FileExists();
+		CalculateGrade();
 	}else if(modeSelect == '5'){
 		system("cls");
 		FileExists();
 		DisplayData();		
 	}else if(modeSelect == '6'){
+		system("cls");
+		FileExists();
+		EditScore();
+	}else if(modeSelect == '7'){
 		exit(0);
 	}
 	Menu();
@@ -105,7 +113,7 @@ void FileExists(void){
 			}
 			system("cls");
 		}
-		fclose(file);	
+		fclose(file);
 	}
 	else{
 	    time_t current_time;
@@ -123,6 +131,7 @@ void FileExists(void){
 		fprintf(file, " ");
 		fprintf(file, header);
 		fprintf(file, "################################################################################\n");
+		fclose(file);
 	}
 }
 	
@@ -130,6 +139,7 @@ void FileExists(void){
 void AddStudent(void){
 	char stuName[200], stuSurname[200], id[200], year[200]; 
 	int ch, score;
+	int counter;
 	printf("################################################# \n");
 	printf("#                                               # \n");
 	printf("#         Adding student to Database            # \n");
@@ -150,11 +160,12 @@ void AddStudent(void){
 	scanf("%s", &id);
 	printf("student year? --> ");
 	scanf("%s", &year);
-	score = 0;       
+	
 	int stuNameLength = strlen(stuName), stuSurnameLength = strlen(stuSurname), idLength = strlen(id);
 	int yearLength = strlen(year);
 	int firstGap = 19 - stuNameLength, secondGap = 22 - stuSurnameLength, thirdGap = 13 - idLength, forthGap = 9 - yearLength;
-	int counter;
+	
+	score = 0;       
 	FILE *file;
 	file = fopen("studb.txt", "a");
 	fprintf(file, " ");
@@ -186,6 +197,8 @@ void AddStudent(void){
 void DeleteStudent(void){
 	char studentID[20];
 	bool recordExists = false;
+	char textTemp[2048];
+	char *test;
 	int ch;
 	printf("################################################# \n");
 	printf("#                                               # \n");
@@ -204,9 +217,7 @@ void DeleteStudent(void){
 	
 	FILE *file1, *file2;
 	file1 = fopen("studb.txt", "r");
-	char *test;
 	file2 = fopen("temp.txt", "w+");
-	char textTemp[2048];
 	while(fgets(textTemp, sizeof(textTemp), file1) != NULL){
 		test = strstr(textTemp, studentID);   
 		if(test == NULL){
@@ -235,6 +246,9 @@ void DeleteStudent(void){
 
 void UpdateStudent(void){
 	char studentID[20], stuName[200], stuSurname[200], year[200];
+	char textTemp[2048];
+	bool recordExists = false;
+	char *test;
 	int ch,score;
 	printf("################################################# \n");
 	printf("#                                               # \n");
@@ -259,16 +273,14 @@ void UpdateStudent(void){
 	scanf("%s", &year);
 	score = 0;
 	
-	FILE *file1, *file2;
-	file1 = fopen("studb.txt", "r");
-	char *test;
-	file2 = fopen("temp.txt", "w+");
-	char textTemp[2048];
 	int stuNameLength = strlen(stuName), stuSurnameLength = strlen(stuSurname), idLength = strlen(studentID);
 	int yearLength = strlen(year);
 	int firstGap = 19 - stuNameLength, secondGap = 22 - stuSurnameLength, thirdGap = 13 - idLength, forthGap = 9 - yearLength, 
 	counter;
-	bool recordExists = false;
+	
+	FILE *file1, *file2;
+	file1 = fopen("studb.txt", "r");
+	file2 = fopen("temp.txt", "w+");
 	while(fgets(textTemp, sizeof(textTemp), file1) != NULL){
 		test = strstr(textTemp, studentID);   
 		if(test == NULL){
@@ -317,6 +329,7 @@ void UpdateStudent(void){
 
 void DisplayData(void){
 	int ch;
+	char textTemp[2048];
 	printf("################################################# \n");
 	printf("#                                               # \n");
 	printf("#             Display Student Data              # \n");
@@ -330,7 +343,6 @@ void DisplayData(void){
 	}
 	printf("\n \n \n");
 	FILE *file = fopen("studb.txt", "r");
-	char textTemp[2048];
 	while(fgets(textTemp, sizeof(textTemp), file) != NULL){
 		printf("%s \n", textTemp);
 	}
@@ -340,6 +352,187 @@ void DisplayData(void){
 }
 
 void CalculateGrade(void){
+	int ch, partCount = 0;
+	char studentID[20], *test, *par, *name, *surname;
+	char textTemp[2048], *score;
+	bool recordExists = false;
+	printf("################################################# \n");
+	printf("#                                               # \n");
+	printf("#            Calculate student grade            # \n");
+	printf("#                                               # \n");
+	printf("################################################# \n \n");
+	printf("   Press N to continue or 0 to exit.      \n");
+    ch = getch();
+    if(ch == 48){
+    	system("cls");
+    	Menu();
+	}
+	printf("\n");
+	printf("   Please, insert student id that you want to edit.      \n");
+	printf("Student id --> ");
+	scanf("%s", &studentID);
+	FILE *file1 = fopen("studb.txt", "r");
+	while(fgets(textTemp, sizeof(textTemp), file1) != NULL){
+		test = strstr(textTemp, studentID); 
+		if(test != NULL){
+			par = strtok(textTemp, " ");
+			while(par != NULL){
+				if(partCount == 4){
+					score = par;
+				}else if(partCount == 0){
+					name = par;
+				}else if(partCount == 1){
+					surname = par;
+				}
+				par = strtok(NULL, " ");
+				partCount++;
+				recordExists = true;
+			}
+		}	
+	}
+	if(recordExists == true){
+		Grading(atoi(score), name, surname);
+		fclose(file1);
+		printf("Press any key to continue!");
+		getch();
+	}else{
+		printf("Student ID not found! \n");
+	    printf("Press any key to re-enter ID!");
+		getch();
+		system("cls");
+		CalculateGrade();
+	}
+}
+
+void Grading(int score, char *name, char *surname){
+	char grade[12];
+	if(score >= 95 && score <= 100){
+		strcpy(grade, "A+");
+	}
+	else if(score >= 90 && score <= 94){
+		strcpy(grade, "A");
+	}
+	else if(score >= 85 && score <= 89){
+        strcpy(grade, "B+");		
+	}
+	else if(score >= 80 && score <= 84){
+		strcpy(grade, "B");
+	}
+	else if(score >= 75 && score <= 79){
+		strcpy(grade, "C+");
+	}
+	else if(score >= 70 && score <= 74){
+		strcpy(grade, "C");
+	}
+	else if(score >= 65 && score <= 69){
+		strcpy(grade, "D+");
+	}
+	else if(score >= 60 && score <= 64){
+		strcpy(grade, "D");
+	}
+	else if(score <= 59){
+		strcpy(grade, "F");
+	}
+	printf("student name is %s %s got grade %s \n", name, surname, grade);
+}
+
+void UpdateScore(){
+	char studentID[20], ch, *name, *surname, *year, *id, *par, textTemp1[2048], textTemp2[2048], *test;
+	int partCount = 0, score;
+	bool recordExists = false;
+	printf("################################################# \n");
+	printf("#                                               # \n");
+	printf("#              Edit student score               # \n");
+	printf("#                                               # \n");
+	printf("################################################# \n \n");
+	printf("   Press N to continue or 0 to exit.      \n");
+    ch = getch();
+    if(ch == 48){
+    	system("cls");
+    	Menu();
+	}
+	printf("\n");
+	printf("   Please, insert student id that you want to edit.      \n");
+	printf("Student id --> ");
+	scanf("%s", &studentID);
+	
+	FILE *file1, *file2;
+	file1 = fopen("studb.txt", "r");
+	while(fgets(textTemp1, sizeof(textTemp1), file1) != NULL){
+		test = strstr(textTemp1, studentID); 
+		if(test != NULL){
+			par = strtok(textTemp1, " ");
+			while(par != NULL){
+				if(partCount == 0){
+					name = par;
+				}else if(partCount == 1){
+					surname = par;
+				}else if(partCount == 2){
+					id = par;
+				}else if(partCount == 3){
+					year = par;
+				}
+				par = strtok(NULL, " ");
+				partCount++;
+				recordExists = true;
+			}
+		}	
+	}
+	fclose(file1);
+
+	if(recordExists == true){
+		printf("\n Student name is %s %s What score do you want to enter?: ", name, surname);
+		scanf("%d", &score);
+		file1 = fopen("studb.txt", "r");
+		file2 = fopen("temp.txt", "w+");
+		int stuNameLength = strlen(name), stuSurnameLength = strlen(surname), idLength = strlen(id);
+		int yearLength = strlen(year);
+		int firstGap = 19 - stuNameLength, secondGap = 22 - stuSurnameLength, thirdGap = 13 - idLength, forthGap = 9 - yearLength, 
+		counter;
+		
+		while(fgets(textTemp2, sizeof(textTemp2), file1) != NULL){
+			test = strstr(textTemp2, studentID);
+			if(test != NULL){
+				fprintf(file2, " ");
+			fprintf(file2, name);
+			for(counter = 0; counter <= firstGap; counter++){
+				fprintf(file2, " ");
+			}
+			fprintf(file2, surname);
+			for(counter = 0; counter <= secondGap; counter++){
+				fprintf(file2, " ");
+			}
+			fprintf(file2, id);
+			for(counter = 0; counter <= thirdGap; counter++){
+				fprintf(file2, " ");
+			}
+			fprintf(file2, year);
+			for(counter = 0; counter <= forthGap; counter++){
+				fprintf(file2, " ");
+			}
+			fprintf(file2,"%d", score);
+			fprintf(file2, "\n");
+			}
+			else{
+				fprintf(file2,"%s", textTemp2);
+			} 
+		}
+		fclose(file2);
+		fclose(file1);
+		remove("studb.txt");
+		rename("temp.txt", "studb.txt");
+		printf("Update student score successfuly!... \n");
+	    printf("Press any key to continue!");
+		getch();
+		
+	}else{
+		printf("Student ID not found! \n");
+	    printf("Press any key to re-enter ID!");
+		getch();
+		system("cls");
+		EditScore();
+	}
+	
 	
 }
 
