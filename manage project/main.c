@@ -45,7 +45,10 @@ void Menu(void){
 		FileExists();
 		UpdateStudent();
 	}else if(modeSelect == '4'){
-	}else if(modeSelect == '5'){		
+	}else if(modeSelect == '5'){
+		system("cls");
+		FileExists();
+		DisplayData();		
 	}else if(modeSelect == '6'){
 		exit(0);
 	}
@@ -107,7 +110,7 @@ void FileExists(void){
 	else{
 	    time_t current_time;
     	char* c_time_string;
-    	char header[200] = "Name                        Surname                        ID                    Year              score\n";
+    	char header[200] = "Name                Surname                ID            Year      score\n";
 		current_time = time(NULL);
 		c_time_string = ctime(&current_time);
 		file = fopen("studb.txt", "w");
@@ -119,7 +122,7 @@ void FileExists(void){
 		fprintf(file, "############################################\n");
 		fprintf(file, " ");
 		fprintf(file, header);
-		fprintf(file, "#########################################################################################################\n");
+		fprintf(file, "################################################################################\n");
 	}
 }
 	
@@ -128,8 +131,8 @@ void FileExists(void){
 
 
 void AddStudent(void){
-	char stuName[200], stuSurname[200], id[200], year[200], score[200]; 
-	int ch;
+	char stuName[200], stuSurname[200], id[200], year[200]; 
+	int ch, score;
 	printf("################################################# \n");
 	printf("#                                               # \n");
 	printf("#         Adding student to Database            # \n");
@@ -150,10 +153,10 @@ void AddStudent(void){
 	scanf("%s", &id);
 	printf("student year? --> ");
 	scanf("%s", &year);
-	score[0] = "0";       
+	score = 0;       
 	int stuNameLength = strlen(stuName), stuSurnameLength = strlen(stuSurname), idLength = strlen(id);
 	int yearLength = strlen(year);
-	int firstGap = 27 - stuNameLength, secondGap = 30 - stuSurnameLength, thirdGap = 21 - idLength, forthGap = 17 - yearLength;
+	int firstGap = 19 - stuNameLength, secondGap = 22 - stuSurnameLength, thirdGap = 13 - idLength, forthGap = 9 - yearLength;
 	int counter;
 	FILE *file;
 	file = fopen("studb.txt", "a");
@@ -174,7 +177,7 @@ void AddStudent(void){
 		for(counter = 0; counter <= forthGap; counter++){
 		fprintf(file, " ");
 	}
-	fprintf(file, score);
+	fprintf(file,"%d", score);
 	fprintf(file, "\n");
 	fclose(file);
 	printf("Adding new student successfuly!... \n");
@@ -234,8 +237,8 @@ void DeleteStudent(void){
 }
 
 void UpdateStudent(void){
-	char studentID[20], stuName[200], stuSurname[200], year[200], score[10];
-	int ch;
+	char studentID[20], stuName[200], stuSurname[200], year[200];
+	int ch,score;
 	printf("################################################# \n");
 	printf("#                                               # \n");
 	printf("#           Edit student in Database            # \n");
@@ -257,7 +260,7 @@ void UpdateStudent(void){
 	scanf("%s", &stuSurname);
 	printf("student year? --> ");
 	scanf("%s", &year);
-	score[0] = "0";
+	score = 0;
 	
 	FILE *file1, *file2;
 	file1 = fopen("studb.txt", "r");
@@ -266,8 +269,8 @@ void UpdateStudent(void){
 	char textTemp[2048];
 	int stuNameLength = strlen(stuName), stuSurnameLength = strlen(stuSurname), idLength = strlen(studentID);
 	int yearLength = strlen(year);
-	int firstGap = 27 - stuNameLength, secondGap = 30 - stuSurnameLength, thirdGap = 21 - idLength, 
-	forthGap = 17 - yearLength, counter;
+	int firstGap = 19 - stuNameLength, secondGap = 22 - stuSurnameLength, thirdGap = 13 - idLength, forthGap = 9 - yearLength, 
+	counter;
 	bool recordExists = false;
 	while(fgets(textTemp, sizeof(textTemp), file1) != NULL){
 		test = strstr(textTemp, studentID);   
@@ -292,7 +295,7 @@ void UpdateStudent(void){
 			for(counter = 0; counter <= forthGap; counter++){
 				fprintf(file2, " ");
 			}
-			fprintf(file2, score);
+			fprintf(file2,"%d", score);
 			fprintf(file2, "\n");
 			recordExists = true;
 		}
@@ -315,4 +318,27 @@ void UpdateStudent(void){
 	}
 }
 
+void DisplayData(void){
+	int ch;
+	printf("################################################# \n");
+	printf("#                                               # \n");
+	printf("#             Display Student Data              # \n");
+	printf("#                                               # \n");
+	printf("################################################# \n \n");
+	printf("   Press N to continue or 0 to exit.      \n");
+    ch = getch();
+    if(ch == 48){
+    	system("cls");
+    	Menu();
+	}
+	printf("\n \n \n");
+	FILE *file = fopen("studb.txt", "r");
+	char textTemp[2048];
+	while(fgets(textTemp, sizeof(textTemp), file) != NULL){
+		printf("%s \n", textTemp);
+	}
+	fclose(file);
+	printf("Press any key to continue!");
+	getch();
+}
 
