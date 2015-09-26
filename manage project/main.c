@@ -28,7 +28,7 @@ void Menu(void){
 	printf("   3 - Update student data \n");
 	printf("   4 - Calculating grade \n");
 	printf("   5 - Display student data \n");
-	printf("   6 - Edit student score \n");
+	printf("   6 - Update student score \n");
 	printf("   7 - Exit! \n");
 	printf("   Go to -> ");
 	scanf("%c", &modeSelect);
@@ -252,7 +252,7 @@ void UpdateStudent(void){
 	int ch,score;
 	printf("################################################# \n");
 	printf("#                                               # \n");
-	printf("#           Edit student in Database            # \n");
+	printf("#           Update student in Database          # \n");
 	printf("#                                               # \n");
 	printf("################################################# \n \n");
 	printf("   Press N to continue or 0 to exit.      \n");
