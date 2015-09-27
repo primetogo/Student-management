@@ -8,12 +8,14 @@
 
 /* Student management version alpha */
 
+/* All function list */
 void FileExists(void), AddStudent(void), DeleteStudent(void), UpdateStudent(void), Menu(void), DisplayData(void);
 void CalculateGrade(void), Grading(int score, char *name, char *surname), UpdateScore(void);
 void main(void){
 	Menu();
 }
 
+/* Main menu for select mode to work on */
 void Menu(void){
 	system("cls");
 	char modeSelect;
@@ -56,13 +58,14 @@ void Menu(void){
 	}else if(modeSelect == '6'){
 		system("cls");
 		FileExists();
-		EditScore();
+		UpdateScore();
 	}else if(modeSelect == '7'){
 		exit(0);
 	}
 	Menu();
 }
 
+/* Checking if text file is exists or not */
 void FileExists(void){
 	FILE *file;
 	int i, j, k, l, m, n;
@@ -135,7 +138,7 @@ void FileExists(void){
 	}
 }
 	
-
+/* function to adding new student */
 void AddStudent(void){
 	char stuName[200], stuSurname[200], id[200], year[200]; 
 	int ch, score;
@@ -194,6 +197,7 @@ void AddStudent(void){
 	
 }
 
+/* function for deleting student */
 void DeleteStudent(void){
 	char studentID[20];
 	bool recordExists = false;
@@ -244,6 +248,7 @@ void DeleteStudent(void){
 	}
 }
 
+/* function for updating student data */
 void UpdateStudent(void){
 	char studentID[20], stuName[200], stuSurname[200], year[200];
 	char textTemp[2048];
@@ -327,6 +332,7 @@ void UpdateStudent(void){
 	}
 }
 
+/* function for displaying student data */
 void DisplayData(void){
 	int ch;
 	char textTemp[2048];
@@ -351,6 +357,7 @@ void DisplayData(void){
 	getch();
 }
 
+/* function for calculating grade */
 void CalculateGrade(void){
 	int ch, partCount = 0;
 	char studentID[20], *test, *par, *name, *surname;
@@ -404,6 +411,7 @@ void CalculateGrade(void){
 	}
 }
 
+/* function to determine grade from score */
 void Grading(int score, char *name, char *surname){
 	char grade[12];
 	if(score >= 95 && score <= 100){
@@ -436,6 +444,7 @@ void Grading(int score, char *name, char *surname){
 	printf("student name is %s %s got grade %s \n", name, surname, grade);
 }
 
+/* function to updating student score */
 void UpdateScore(){
 	char studentID[20], ch, *name, *surname, *year, *id, *par, textTemp1[2048], textTemp2[2048], *test;
 	int partCount = 0, score;
@@ -530,7 +539,7 @@ void UpdateScore(){
 	    printf("Press any key to re-enter ID!");
 		getch();
 		system("cls");
-		EditScore();
+		UpdateScore();
 	}
 	
 	
